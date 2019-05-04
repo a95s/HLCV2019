@@ -46,6 +46,7 @@ class TwoLayerNet(object):
         self.params['b1'] = np.zeros(hidden_size)
         self.params['W2'] = std * np.random.randn(hidden_size, output_size)
         self.params['b2'] = np.zeros(output_size)
+        self.num_classes  = output_size
 
     def loss(self, X, y=None, reg=0.0):
         """
@@ -131,10 +132,11 @@ class TwoLayerNet(object):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         # delta matrix appears in formulas
         #print("calc. loss")
-        num_classes = 3  # 3 classes: 0,1,2
-        delta = np.zeros((y.size, num_classes))
+        #num_classes = 3  # 3 classes: 0,1,2
+        delta = np.zeros((N, self.num_classes))
         delta[np.arange(y.size), y] = 1         # to one-hot
         grads['W1'] = np.matmul(W2, np.matmul((a3 - delta).T, a1)).T / N + 2 * reg * W1
+        #grads['W1'] = np.matmul(W2, np.matmul((a3 - delta).T, a1)).T / N + 2 * reg * W1
         grads['W2'] = np.matmul(a2.T, (a3 - delta)) / N + 2 * reg * W2
         grads['b1'] = np.sum(np.matmul(W2, (a3 - delta).T), axis=1) / N
         grads['b2'] = np.sum((a3 - delta).T, axis=1) / N
@@ -212,11 +214,11 @@ class TwoLayerNet(object):
             self.params['b1'] = self.params['b1'] - learning_rate * grads['b1']
             self.params['W2'] = self.params['W2'] - learning_rate * grads['W2']
             self.params['b2'] = self.params['b2'] - learning_rate * grads['b2']
-                # print("after update")
-                # print("W1 ", self.params['W1'].shape)
-                # print("W2 ", self.params['W2'].shape)
-                # print("b1 ", self.params['b1'].shape)
-                # print("b2 ", self.params['b2'].shape)
+            # print("after update")
+            # print("W1 ", self.params['W1'].shape)
+            # print("W2 ", self.params['W2'].shape)
+            # print("b1 ", self.params['b1'].shape)
+            # print("b2 ", self.params['b2'].shape)
             #exit(0)
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -255,14 +257,13 @@ class TwoLayerNet(object):
           the elements of X. For all i, y_pred[i] = c means that X[i] is predicted
           to have class c, where 0 <= c < C.
         """
-        y_pred = None
 
         ###########################################################################
         # TODO: Implement this function; it should be VERY simple!                #
         ###########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        y_pred = np.argmax(self.loss(X), axis=1)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 

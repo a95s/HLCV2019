@@ -61,6 +61,7 @@ def init_toy_data():
                   [0,1,0]])"""
     return X, y
 
+"""
 net = init_toy_model()
 X, y = init_toy_data()
 
@@ -119,7 +120,7 @@ loss, grads = net.loss(X, y, reg=0.05)
 
 # these should all be less than 1e-8 or so
 for param_name in grads:
-    print("going for num. grad. " + param_name)
+    #print("going for num. grad. " + param_name)
     f = lambda W: net.loss(X, y, reg=0.05)[0]
     param_grad_num = eval_numerical_gradient(f, net.params[param_name], verbose=False)
     print('%s max relative error: %e' % (param_name, rel_error(param_grad_num, grads[param_name])))
@@ -152,7 +153,7 @@ plt.xlabel('iteration')
 plt.ylabel('training loss')
 plt.title('Training Loss history')
 plt.show()
-
+"""
 
 # # Load the data
 # Now that you have implemented a two-layer network that passes
@@ -180,14 +181,15 @@ plt.show()
 # multiplying it by a decay rate.
 
 input_size = 32 * 32 * 3
-hidden_size = 50
+hidden_size = 20
 num_classes = 10
+
 net = TwoLayerNet(input_size, hidden_size, num_classes)
 # Train the network
 stats = net.train(X_train, y_train, X_val, y_val,
-            num_iters=1000, batch_size=200,
-            learning_rate=1e-4, learning_rate_decay=0.95,
-            reg=0.25, verbose=True)
+            num_iters=1000, batch_size=256,
+            learning_rate=1e-4, learning_rate_decay=0.9,
+            reg=0.025, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val) == y_val).mean()
@@ -226,7 +228,7 @@ plt.show()
 # Visualize the weights of the network
 
 show_net_weights(net)
-
+#exit(0)
 # # Tune your hyperparameters
 #
 # **What's wrong?**. Looking at the visualizations above, we see that the loss
