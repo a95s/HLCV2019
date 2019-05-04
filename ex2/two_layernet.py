@@ -135,17 +135,6 @@ class TwoLayerNet(object):
         dJ_b1 =  np.sum(np.dot(W2 , (a3 - Delta).T), axis=1) / N
         dJ_b2 =  np.sum((a3 - Delta).T, axis=1) / N
 
-        # print('z2 shape', z2.shape)
-        # z2ltz = np.where(z2 >= 0., 1., 0. )
-        # first_term  = 2.0 * reg * W1
-        # print('first_term shape', first_term.shape)
-        # second_term = np.dot(W2 , np.dot( (a3 - Delta).T , a1 ) ) / N
-        # # second_term = np.append( second_term, np.zeros((second_term.shape[0], 1)), axis=1)
-        # # second_term = np.dot(second_term, z2ltz)
-        # print("second term shape  & z2check shape ", second_term.shape  , z2ltz.shape)
-        # print('z2ltzn\n', z2ltz)
-        # import time; time.sleep(100000)
-
         grads['W1'] = dJ_dW1
         grads['W2'] =  dJ_dW2
         grads['b1'] =  dJ_b1
@@ -190,11 +179,24 @@ class TwoLayerNet(object):
             X_batch = X
             y_batch = y
 
+
+
             #########################################################################
             # TODO: Create a random minibatch of training data and labels, storing  #
             # them in X_batch and y_batch respectively.                             #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
+            X_batch = None
+            y_batch = None
+
+            #shuffled_ind = np.random.shuffle(np.arange(num_train))
+            indices = np.random.randint(0, num_train, size=batch_size)
+            np.random.shuffle(indices)
+            # shuffled_ind  = np.random.randint(0, num_train, size=batch_size)
+            X_batch = X[indices]
+            y_batch = y[indices]
+
             pass
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -209,6 +211,11 @@ class TwoLayerNet(object):
             # stored in the grads dictionary defined above.                         #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
+            self.params['W1'] = self.params['W1'] - learning_rate * grads['W1']
+            self.params['W2'] = self.params['W2'] - learning_rate * grads['W2']
+            self.params['b1'] = self.params['b1'] - learning_rate * grads['b1']
+            self.params['b2'] = self.params['b2'] - learning_rate * grads['b2']
 
             pass
 
@@ -255,6 +262,8 @@ class TwoLayerNet(object):
         # TODO: Implement this function; it should be VERY simple!                #
         ###########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
+        y_pred = np.argmax(self.loss(X), axis=1)
 
         pass
 
