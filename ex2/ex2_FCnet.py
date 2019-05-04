@@ -170,9 +170,9 @@ print('Test data shape: ', X_test.shape)
 print('Test labels shape: ', y_test.shape)
 
 # Visualize some images to get a feel for the data
-plt.imshow(visualize_grid(X_train[:100, :].reshape(100, 32,32, 3), padding=3).astype('uint8'))
-plt.gca().axis('off')
-plt.show()
+#plt.imshow(visualize_grid(X_train[:100, :].reshape(100, 32,32, 3), padding=3).astype('uint8'))
+#plt.gca().axis('off')
+#plt.show()
 
 # # Train a network
 # To train our network we will use SGD. In addition, we will
@@ -181,15 +181,15 @@ plt.show()
 # multiplying it by a decay rate.
 
 input_size = 32 * 32 * 3
-hidden_size = 20
+hidden_size = 50
 num_classes = 10
 
 net = TwoLayerNet(input_size, hidden_size, num_classes)
 # Train the network
 stats = net.train(X_train, y_train, X_val, y_val,
-            num_iters=1000, batch_size=256,
-            learning_rate=1e-4, learning_rate_decay=0.9,
-            reg=0.025, verbose=True)
+            num_iters=3000, batch_size=100,
+            learning_rate=1e-3, learning_rate_decay=0.95,
+            reg=0.1, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val) == y_val).mean()
@@ -214,7 +214,7 @@ plt.plot(stats['loss_history'])
 plt.title('Loss history')
 plt.xlabel('Iteration')
 plt.ylabel('Loss')
-
+print(stats['train_acc_history'],stats['val_acc_history'])
 plt.subplot(2, 1, 2)
 plt.plot(stats['train_acc_history'], label='train')
 plt.plot(stats['val_acc_history'], label='val')
@@ -227,7 +227,7 @@ plt.show()
 
 # Visualize the weights of the network
 
-show_net_weights(net)
+#show_net_weights(net)
 #exit(0)
 # # Tune your hyperparameters
 #
