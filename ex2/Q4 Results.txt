@@ -1,0 +1,127 @@
+2 layers
+Epoch [1/10], Step [100/245], Loss: 2.0193
+Epoch [1/10], Step [200/245], Loss: 1.7586
+Validataion accuracy is: 34.8 %
+Epoch [2/10], Step [100/245], Loss: 1.6953
+Epoch [2/10], Step [200/245], Loss: 1.5596
+Validataion accuracy is: 43.0 %
+Epoch [3/10], Step [100/245], Loss: 1.4711
+Epoch [3/10], Step [200/245], Loss: 1.3780
+Validataion accuracy is: 47.5 %
+Epoch [4/10], Step [100/245], Loss: 1.5244
+Epoch [4/10], Step [200/245], Loss: 1.5120
+Validataion accuracy is: 47.2 %
+Epoch [5/10], Step [100/245], Loss: 1.4064
+Epoch [5/10], Step [200/245], Loss: 1.3568
+Validataion accuracy is: 49.9 %
+Epoch [6/10], Step [100/245], Loss: 1.4497
+Epoch [6/10], Step [200/245], Loss: 1.3547
+Validataion accuracy is: 49.7 %
+Epoch [7/10], Step [100/245], Loss: 1.4025
+Epoch [7/10], Step [200/245], Loss: 1.4434
+Validataion accuracy is: 52.0 %
+Epoch [8/10], Step [100/245], Loss: 1.2596
+Epoch [8/10], Step [200/245], Loss: 1.3211
+Validataion accuracy is: 52.4 %
+Epoch [9/10], Step [100/245], Loss: 1.3197
+Epoch [9/10], Step [200/245], Loss: 1.2563
+Validataion accuracy is: 50.6 %
+Epoch [10/10], Step [100/245], Loss: 1.3146
+Epoch [10/10], Step [200/245], Loss: 1.3705
+Validataion accuracy is: 52.3 %
+
+3 layers
+Epoch [1/10], Step [100/245], Loss: 2.0080
+Epoch [1/10], Step [200/245], Loss: 1.9566
+Validataion accuracy is: 26.6 %
+Epoch [2/10], Step [100/245], Loss: 1.8453
+Epoch [2/10], Step [200/245], Loss: 1.8639
+Validataion accuracy is: 30.1 %
+Epoch [3/10], Step [100/245], Loss: 1.7211
+Epoch [3/10], Step [200/245], Loss: 1.7487
+Validataion accuracy is: 39.1 %
+Epoch [4/10], Step [100/245], Loss: 1.5863
+Epoch [4/10], Step [200/245], Loss: 1.5657
+Validataion accuracy is: 42.2 %
+Epoch [5/10], Step [100/245], Loss: 1.5137
+Epoch [5/10], Step [200/245], Loss: 1.5891
+Validataion accuracy is: 44.0 %
+Epoch [6/10], Step [100/245], Loss: 1.5363
+Epoch [6/10], Step [200/245], Loss: 1.5655
+Validataion accuracy is: 48.3 %
+Epoch [7/10], Step [100/245], Loss: 1.3634
+Epoch [7/10], Step [200/245], Loss: 1.4982
+Validataion accuracy is: 49.8 %
+Epoch [8/10], Step [100/245], Loss: 1.3566
+Epoch [8/10], Step [200/245], Loss: 1.4119
+Validataion accuracy is: 49.3 %
+Epoch [9/10], Step [100/245], Loss: 1.3150
+Epoch [9/10], Step [200/245], Loss: 1.2806
+Validataion accuracy is: 50.8 %
+Epoch [10/10], Step [100/245], Loss: 1.4089
+Epoch [10/10], Step [200/245], Loss: 1.3968
+Validataion accuracy is: 48.6 %
+
+4 layers
+Epoch [1/10], Step [100/245], Loss: 2.3027 
+Epoch [1/10], Step [200/245], Loss: 2.3030 
+Validataion accuracy is: 11.3 %            
+Epoch [2/10], Step [100/245], Loss: 2.3030 
+Epoch [2/10], Step [200/245], Loss: 2.3019 
+Validataion accuracy is: 10.7 %            
+Epoch [3/10], Step [100/245], Loss: 2.3024 
+Epoch [3/10], Step [200/245], Loss: 2.3025 
+Validataion accuracy is: 7.9 %             
+Epoch [4/10], Step [100/245], Loss: 2.3033 
+Epoch [4/10], Step [200/245], Loss: 2.3028 
+Validataion accuracy is: 7.9 %             
+Epoch [5/10], Step [100/245], Loss: 2.3025 
+Epoch [5/10], Step [200/245], Loss: 2.3031 
+Validataion accuracy is: 7.9 %             
+Epoch [6/10], Step [100/245], Loss: 2.3041 
+Epoch [6/10], Step [200/245], Loss: 2.3024 
+Validataion accuracy is: 7.8 %             
+Epoch [7/10], Step [100/245], Loss: 2.3025 
+Epoch [7/10], Step [200/245], Loss: 2.3028 
+Validataion accuracy is: 7.8 %             
+Epoch [8/10], Step [100/245], Loss: 2.3019 
+Epoch [8/10], Step [200/245], Loss: 2.3025 
+Validataion accuracy is: 7.8 %             
+Epoch [9/10], Step [100/245], Loss: 2.3031 
+Epoch [9/10], Step [200/245], Loss: 2.3025 
+Validataion accuracy is: 7.8 %             
+Epoch [10/10], Step [100/245], Loss: 2.3027
+Epoch [10/10], Step [200/245], Loss: 2.3023
+Validataion accuracy is: 7.8 %             
+
+5 layers
+Epoch [1/10], Step [100/245], Loss: 2.3031
+Epoch [1/10], Step [200/245], Loss: 2.3031
+Validataion accuracy is: 7.8 %
+Epoch [2/10], Step [100/245], Loss: 2.3034
+Epoch [2/10], Step [200/245], Loss: 2.3026
+Validataion accuracy is: 8.7 %
+Epoch [3/10], Step [100/245], Loss: 2.3027
+Epoch [3/10], Step [200/245], Loss: 2.3023
+Validataion accuracy is: 8.7 %
+Epoch [4/10], Step [100/245], Loss: 2.3023
+Epoch [4/10], Step [200/245], Loss: 2.3031
+Validataion accuracy is: 8.7 %
+Epoch [5/10], Step [100/245], Loss: 2.3032
+Epoch [5/10], Step [200/245], Loss: 2.3025
+Validataion accuracy is: 7.8 %
+Epoch [6/10], Step [100/245], Loss: 2.3028
+Epoch [6/10], Step [200/245], Loss: 2.3027
+Validataion accuracy is: 7.8 %
+Epoch [7/10], Step [100/245], Loss: 2.3024
+Epoch [7/10], Step [200/245], Loss: 2.3032
+Validataion accuracy is: 9.8 %
+Epoch [8/10], Step [100/245], Loss: 2.3028
+Epoch [8/10], Step [200/245], Loss: 2.3025
+Validataion accuracy is: 11.3 %
+Epoch [9/10], Step [100/245], Loss: 2.3026
+Epoch [9/10], Step [200/245], Loss: 2.3025
+Validataion accuracy is: 7.9 %
+Epoch [10/10], Step [100/245], Loss: 2.3024
+Epoch [10/10], Step [200/245], Loss: 2.3031
+Validataion accuracy is: 7.9 %
