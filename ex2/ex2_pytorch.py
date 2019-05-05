@@ -24,7 +24,7 @@ print('Using device: %s'%device)
 # Hyper-parameters
 #--------------------------------
 input_size = 32 * 32 * 3
-hidden_size = [25,25]
+hidden_size = [50]
 num_classes = 10
 num_epochs = 10
 batch_size = 200
