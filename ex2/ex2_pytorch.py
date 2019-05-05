@@ -4,7 +4,6 @@ import torchvision
 import torchvision.transforms as transforms
 import sys
 import numpy as np
-#from collections import OrderedDict 
 
 def weights_init(m):
     if type(m) == nn.Linear:
@@ -25,7 +24,7 @@ print('Using device: %s'%device)
 # Hyper-parameters
 #--------------------------------
 input_size = 32 * 32 * 3
-hidden_size = [50]
+hidden_size = [25,25]
 num_classes = 10
 num_epochs = 10
 batch_size = 200
@@ -109,11 +108,6 @@ class MultiLayerPerceptron(nn.Module):
         #################################################################################
         layers = []
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        """layers = OrderedDict([
-            ('hidden',nn.Linear(input_size, hidden_layers[0])),
-            ('relu',nn.ReLU()),
-            ('output',nn.Linear(hidden_layers[0], num_classes))
-        ])"""
         layers = [
             nn.Linear(input_size, hidden_layers[0]),
             nn.ReLU(),
@@ -134,7 +128,8 @@ class MultiLayerPerceptron(nn.Module):
         x = x.view(-1, n_features)
         x = self.layers[0](x)
         x = self.layers[1](x)
-        out = self.layers[2](x)
+        x = self.layers[2](x)
+        out = x
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return out
 
@@ -165,6 +160,7 @@ if train:
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
             outputs = model(images)
             loss =  criterion(outputs, labels)
+            model.zero_grad()
             loss.backward()
             optimizer.step()
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
