@@ -41,6 +41,7 @@ def show_net_weights(net):
 # Create a small net and some toy data to check your implementations.
 # Note that we set the random seed for repeatable experiments.
 
+"""
 input_size = 4
 hidden_size = 10
 num_classes = 3
@@ -54,14 +55,10 @@ def init_toy_data():
     np.random.seed(1)
     X = 10 * np.random.randn(num_inputs, input_size)
     y = np.array([0, 1, 2, 2, 1])
-    """y = np.array([[1,0,0],
-                  [0,1,0],
-                  [0,0,1],
-                  [0,0,1],
-                  [0,1,0]])"""
+
     return X, y
 
-"""
+
 net = init_toy_model()
 X, y = init_toy_data()
 
@@ -153,6 +150,7 @@ plt.xlabel('iteration')
 plt.ylabel('training loss')
 plt.title('Training Loss history')
 plt.show()
+exit(0)
 """
 
 # # Load the data
@@ -181,15 +179,15 @@ print('Test labels shape: ', y_test.shape)
 # multiplying it by a decay rate.
 
 input_size = 32 * 32 * 3
-hidden_size = 150
+hidden_size = 200
 num_classes = 10
 
-net = TwoLayerNet(input_size, hidden_size, num_classes)
+net = TwoLayerNet(input_size, hidden_size, num_classes, use_dropout=True, keep_prob=0.8)
 # Train the network
 stats = net.train(X_train, y_train, X_val, y_val,
-            num_iters=5000, batch_size=200,
-            learning_rate=1e-3, learning_rate_decay=0.95,
-            reg=1.0, verbose=True)
+            num_iters=3000, batch_size=200,
+            learning_rate=(1e-3), learning_rate_decay=0.95,
+            reg=0.1, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val) == y_val).mean()

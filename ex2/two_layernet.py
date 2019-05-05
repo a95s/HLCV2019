@@ -25,7 +25,7 @@ class TwoLayerNet(object):
     The outputs of the second fully-connected layer are the scores for each class.
     """
 
-    def __init__(self, input_size, hidden_size, output_size, std=1e-4):
+    def __init__(self, input_size, hidden_size, output_size, std=1e-4, use_dropout=False, keep_prob=0.0):
         """
         Initialize the model. Weights are initialized to small random values and
         biases are initialized to zero. Weights and biases are stored in the
@@ -46,7 +46,10 @@ class TwoLayerNet(object):
         self.params['b1'] = np.zeros(hidden_size)
         self.params['W2'] = std * np.random.randn(hidden_size, output_size)
         self.params['b2'] = np.zeros(output_size)
+
         self.num_classes  = output_size
+        self.use_dropout  = use_dropout
+        self.keep_prob    = keep_prob
 
     def loss(self, X, y=None, reg=0.0):
         """
@@ -94,10 +97,21 @@ class TwoLayerNet(object):
 
         a1 = X
         z2 = np.matmul(X, W1) + b1
+
         a2 = np.maximum(0, z2)
+
+        d2 = np.ones((a2.shape[0], a2.shape[1]))
+        if self.use_dropout:
+            d2 = np.random.rand(a2.shape[0], a2.shape[1])
+            d2 = (d2 < self.keep_prob).astype(float)
+            a2 = a2 * d2
+            a2 = a2 / self.keep_prob
+
         z3 = np.matmul(a2, W2) + b2
         a3 = np.exp(z3) * np.expand_dims(1.0 / np.sum(np.exp(z3), axis=1), axis=1)
         scores = a3
+        #print("intermediate layer shapes")
+        #print(a1.shape, z2.shape, a2.shape, z3.shape, a3.shape)
         #print(a3.shape)
         #print(a3)
         #print(y)
@@ -132,14 +146,43 @@ class TwoLayerNet(object):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         # delta matrix appears in formulas
         #print("calc. loss")
-        #num_classes = 3  # 3 classes: 0,1,2
+        # 3 classes: 0,1,2
         delta = np.zeros((N, self.num_classes))
         delta[np.arange(y.size), y] = 1         # to one-hot
-        grads['W1'] = np.matmul(W2, np.matmul((a3 - delta).T, a1)).T / N + 2 * reg * W1
-        #grads['W1'] = np.matmul(W2, np.matmul((a3 - delta).T, a1)).T / N + 2 * reg * W1
-        grads['W2'] = np.matmul(a2.T, (a3 - delta)) / N + 2 * reg * W2
-        grads['b1'] = np.sum(np.matmul(W2, (a3 - delta).T), axis=1) / N
-        grads['b2'] = np.sum((a3 - delta).T, axis=1) / N
+
+        dZ3 = (a3 - delta)
+        dW2 = np.matmul(a2.T, dZ3) / N + 2 * reg * W2
+        db2 = np.sum(dZ3.T,axis=1) / N
+
+        dA2 = np.matmul(dZ3, W2.T)
+
+        if self.use_dropout:
+            dA2 = dA2 * d2
+            dA2 = dA2 / self.keep_prob
+
+        #dZ2 = dA2
+        dZ2 = np.multiply(dA2, np.int64(a2 > 0))
+        dW1 = np.matmul(a1.T,dA2) / N + 2 * reg * W1
+        db1 = np.sum(dA2.T, axis=1) / N
+
+        #print("intermediate grad shapes")
+        #print(dZ3.shape,dA2.shape,dZ2.shape,dW2.shape,db2.shape,dW1.shape,db1.shape)
+
+        #dz3, dA2, dz2, db1
+
+        #if self.use_dropout:
+        #    dA2 = dA2 * d2
+        #    dA2 = dA2 / self.keep_prob
+
+        grads['W1'] = dW1
+        grads['b1'] = db1
+        grads['W2'] = dW2
+        grads['b2'] = db2
+
+        # grads['W1'] = np.matmul(W2, np.matmul((a3 - delta).T, a1)).T / N + 2 * reg * W1
+        # grads['b1'] = np.sum(np.matmul(W2, (a3 - delta).T), axis=1) / N
+        # grads['W2'] = np.matmul(a2.T, (a3 - delta)) / N + 2 * reg * W2
+        # grads['b2'] = np.sum((a3 - delta).T, axis=1) / N
 
         # print("Grads. shapes")
         # print("backwd pass")
@@ -194,6 +237,7 @@ class TwoLayerNet(object):
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
             # get batch_size random entries, so we can get a random batch from set
             random_indices = np.random.randint(0, num_train, size=batch_size)
+            #print(random_indices)
             X_batch = X[random_indices]
             y_batch = y[random_indices]
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
