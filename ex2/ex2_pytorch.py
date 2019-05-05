@@ -3,6 +3,7 @@ import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 import sys
+import numpy as np
 #from collections import OrderedDict 
 
 def weights_init(m):
@@ -129,6 +130,8 @@ class MultiLayerPerceptron(nn.Module):
         # nn.CrossEntropyLoss() already integrates the softmax and the log loss together#
         #################################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        n_features = np.prod(x.size()[1:])
+        x = x.view(-1, n_features)
         x = self.layers[0](x)
         x = self.layers[1](x)
         out = self.layers[2](x)
