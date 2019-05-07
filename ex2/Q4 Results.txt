@@ -1,3 +1,35 @@
+1 layer (a,b)
+Epoch [1/10], Step [100/245], Loss: 1.8228
+Epoch [1/10], Step [200/245], Loss: 1.6656
+Validataion accuracy is: 41.2 %
+Epoch [2/10], Step [100/245], Loss: 1.6650
+Epoch [2/10], Step [200/245], Loss: 1.6001
+Validataion accuracy is: 46.4 %
+Epoch [3/10], Step [100/245], Loss: 1.5764
+Epoch [3/10], Step [200/245], Loss: 1.4281
+Validataion accuracy is: 48.3 %
+Epoch [4/10], Step [100/245], Loss: 1.4088
+Epoch [4/10], Step [200/245], Loss: 1.3664
+Validataion accuracy is: 48.6 %
+Epoch [5/10], Step [100/245], Loss: 1.2976
+Epoch [5/10], Step [200/245], Loss: 1.2965
+Validataion accuracy is: 47.9 %
+Epoch [6/10], Step [100/245], Loss: 1.3499
+Epoch [6/10], Step [200/245], Loss: 1.3135
+Validataion accuracy is: 49.8 %
+Epoch [7/10], Step [100/245], Loss: 1.2883
+Epoch [7/10], Step [200/245], Loss: 1.3280
+Validataion accuracy is: 49.6 %
+Epoch [8/10], Step [100/245], Loss: 1.3635
+Epoch [8/10], Step [200/245], Loss: 1.3079
+Validataion accuracy is: 49.8 %
+Epoch [9/10], Step [100/245], Loss: 1.3065
+Epoch [9/10], Step [200/245], Loss: 1.3437
+Validataion accuracy is: 51.5 %
+Epoch [10/10], Step [100/245], Loss: 1.2789
+Epoch [10/10], Step [200/245], Loss: 1.2091
+Validataion accuracy is: 50.6 %
+
 2 layers
 Epoch [1/10], Step [100/245], Loss: 2.0193
 Epoch [1/10], Step [200/245], Loss: 1.7586

@@ -1,0 +1,14 @@
+Q4 c) 
+    A different number of the combination "Linear-ReLU" was tested.
+    
+    The results are as follows:
+    2 layers-network has reached 52% accuracy on the validation set,
+    3 layers reached peaked at ninth epoch with 50.8% but went to 48.6 at 10th. Before the 9th epoch, a steady growth was shown.
+    4 layers started from 11% and went to the slightly changing 7.8% during later epochs.
+    5 layers has shown a performance which was very similar to the 4-layered version.
+    
+    Based on the results, we can assume that the models with 4 and 5 linear layers have overfit the data to such a degree that a random choice would fair better than these network on the validation set.
+    
+    The reason behind it is that the capacity of these two models was considerably higher when compared to the 3-layered model. Due to the insufficient amount of data, a system with such high capacity was not able to avoid overfitting.
+    
+    The best network configuration (2 layers) has shown accuracy 51.3 % on the 1000 test images.
