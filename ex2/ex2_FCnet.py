@@ -179,7 +179,7 @@ print('Test labels shape: ', y_test.shape)
 # multiplying it by a decay rate.
 
 input_size = 32 * 32 * 3
-hidden_size = 50
+hidden_size = 80
 num_classes = 10
 
 net = TwoLayerNet(input_size, hidden_size, num_classes, use_dropout=False, keep_prob=0.95)
