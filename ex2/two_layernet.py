@@ -161,9 +161,11 @@ class TwoLayerNet(object):
             dA2 = dA2 / self.keep_prob
 
         #dZ2 = dA2
-        dZ2 = np.multiply(dA2, np.int64(a2 > 0))
-        dW1 = np.matmul(a1.T,dA2) / N + 2 * reg * W1
-        db1 = np.sum(dA2.T, axis=1) / N
+        dZ2 = np.multiply(dA2, np.int64(z2 > 0))
+        #dW1 = np.matmul(a1.T,dA2) / N + 2 * reg * W1
+        dW1 = np.matmul(a1.T,dZ2) / N + 2 * reg * W1
+        #db1 = np.sum(dA2.T, axis=1) / N
+        db1 = np.sum(np.multiply(dA2, np.int64(z2 > 0)).T, axis=1) / N
 
         #print("intermediate grad shapes")
         #print(dZ3.shape,dA2.shape,dZ2.shape,dW2.shape,db2.shape,dW1.shape,db1.shape)
