@@ -159,7 +159,7 @@ exit(0)
 # CIFAR-10 data so we can use it to train a classifier on a real dataset.
 # Invoke the get_CIFAR10_data function to get our data.
 
-X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data()
+X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data(num_training=45000, num_validation=2500, num_test=2500)
 print('Train data shape: ', X_train.shape)
 print('Train labels shape: ', y_train.shape)
 print('Validation data shape: ', X_val.shape)
@@ -179,15 +179,15 @@ print('Test labels shape: ', y_test.shape)
 # multiplying it by a decay rate.
 
 input_size = 32 * 32 * 3
-hidden_size = 200
+hidden_size = 50
 num_classes = 10
 
-net = TwoLayerNet(input_size, hidden_size, num_classes, use_dropout=True, keep_prob=0.8)
+net = TwoLayerNet(input_size, hidden_size, num_classes, use_dropout=False, keep_prob=0.8)
 # Train the network
 stats = net.train(X_train, y_train, X_val, y_val,
-            num_iters=3000, batch_size=200,
+            num_iters=10000, batch_size=300,
             learning_rate=(1e-3), learning_rate_decay=0.95,
-            reg=0.1, verbose=True)
+            reg=0.25, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val) == y_val).mean()
