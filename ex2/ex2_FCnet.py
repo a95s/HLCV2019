@@ -27,7 +27,7 @@ def show_net_weights(net):
 
 #-------------------------- * End of helper functions *--------------------------------
 
-
+"""
 #======================================================================================
 # Q1: Implementing forward pass and the loss functions
 #======================================================================================
@@ -41,7 +41,7 @@ def show_net_weights(net):
 # Create a small net and some toy data to check your implementations.
 # Note that we set the random seed for repeatable experiments.
 
-"""
+
 input_size = 4
 hidden_size = 10
 num_classes = 3
@@ -159,7 +159,8 @@ exit(0)
 # CIFAR-10 data so we can use it to train a classifier on a real dataset.
 # Invoke the get_CIFAR10_data function to get our data.
 
-X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data(num_training=46000, num_validation=2000, num_test=2000)
+#X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data(num_training=46000, num_validation=2000, num_test=2000)
+X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data()
 print('Train data shape: ', X_train.shape)
 print('Train labels shape: ', y_train.shape)
 print('Validation data shape: ', X_val.shape)
@@ -179,15 +180,15 @@ print('Test labels shape: ', y_test.shape)
 # multiplying it by a decay rate.
 
 input_size = 32 * 32 * 3
-hidden_size = 80
+hidden_size = 100
 num_classes = 10
-
-net = TwoLayerNet(input_size, hidden_size, num_classes, use_dropout=False, keep_prob=0.95)
+np.random.seed(0)
+net = TwoLayerNet(input_size, hidden_size, num_classes, use_dropout=False, keep_prob=0.25)
 # Train the network
 stats = net.train(X_train, y_train, X_val, y_val,
-            num_iters=5000, batch_size=400,
+            num_iters=4000, batch_size=200,
             learning_rate=1e-3, learning_rate_decay=0.95,
-            reg=0.1, verbose=True)
+            reg=0.25, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val) == y_val).mean()
@@ -226,7 +227,7 @@ plt.show()
 # Visualize the weights of the network
 
 show_net_weights(net)
-exit(0)
+#exit(0)
 # # Tune your hyperparameters
 #
 # **What's wrong?**. Looking at the visualizations above, we see that the loss
@@ -256,7 +257,7 @@ exit(0)
 
 # **Explain your hyperparameter tuning process in the report.**
 
-best_net = None # store the best model into this
+best_net = net # store the best model into this
 
 #################################################################################
 # TODO: Tune hyperparameters using the validation set. Store your best trained  #
@@ -271,7 +272,8 @@ best_net = None # store the best model into this
 #################################################################################
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-pass
+# all the experiments have been explained in report, with graphs and tables.
+
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 # visualize the weights of the best network

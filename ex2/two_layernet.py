@@ -132,7 +132,8 @@ class TwoLayerNet(object):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         # Implement the loss for softmax output layer
         #loss = ((np.sum(-np.log(a3)))  + reg*(np.linalg.norm(W1,2) + np.linalg.norm(W2,2)))
-        loss = -(np.sum(np.log(a3[range(N),y]))) / N + reg*(np.sum(W1*W1) + np.sum(W2*W2))
+        #print(a3[range(N),y])
+        loss = (-1.0*(np.sum(np.log(a3[range(N),y]))) / N) + reg*(np.sum(np.square(W1)) + np.sum(np.square(W2)))
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -169,12 +170,6 @@ class TwoLayerNet(object):
 
         #print("intermediate grad shapes")
         #print(dZ3.shape,dA2.shape,dZ2.shape,dW2.shape,db2.shape,dW1.shape,db1.shape)
-
-        #dz3, dA2, dz2, db1
-
-        #if self.use_dropout:
-        #    dA2 = dA2 * d2
-        #    dA2 = dA2 / self.keep_prob
 
         grads['W1'] = dW1
         grads['b1'] = db1
