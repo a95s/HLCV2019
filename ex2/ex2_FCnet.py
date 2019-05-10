@@ -183,7 +183,9 @@ input_size = 32 * 32 * 3
 hidden_size = 100
 num_classes = 10
 np.random.seed(0)
-net = TwoLayerNet(input_size, hidden_size, num_classes, use_dropout=False, keep_prob=0.25)
+net = TwoLayerNet(input_size, hidden_size, num_classes,
+                    use_dropout=False, keep_prob=0.25   # only effective if use_dropout=True
+                 )
 # Train the network
 stats = net.train(X_train, y_train, X_val, y_val,
             num_iters=4000, batch_size=200,
@@ -273,7 +275,58 @@ best_net = net # store the best model into this
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 # all the experiments have been explained in report, with graphs and tables.
+# the code is commented for two reasons, PCA is not used on final submitted net
+# also, we're using scikit which might not be installed on testing system and
+# cause unwanted errors
 
+
+"""
+# PCA 
+
+# n_comp components are giving more than X % of variance
+# we reduce the number of components (dimensions) to n_comp
+
+from sklearn.decomposition import PCA
+n_comp = 250
+pca = PCA(n_components=n_comp) #, whiten=False, random_state=2019)
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.fit_transform(X_test)
+X_val_pca = pca.fit_transform(X_val)
+
+print('shape 1  ', X_train.shape)
+print('shape 2  ', X_train_pca.shape)
+
+# Now train using these reduced sets
+input_size  =  n_comp       # 32 * 32 * 3   # = 3072
+hidden_size = 50
+num_classes = 10
+net = TwoLayerNet(input_size, hidden_size, num_classes)
+# Train the network
+stats = net.train(X_train_pca, y_train, X_val_pca, y_val,
+            num_iters=1000, batch_size=200,
+            learning_rate=1e-4, learning_rate_decay=0.95,
+            reg=0.25, verbose=True)
+
+# Predict on the validation set
+val_acc = (net.predict(X_val_pca) == y_val).mean()
+print('Validation accuracy: ', val_acc)
+
+plt.subplot(2, 1, 1)
+plt.plot(stats['loss_history'])
+plt.title('Loss history')
+plt.xlabel('Iteration')
+plt.ylabel('Loss')
+print(stats['train_acc_history'],stats['val_acc_history'])
+plt.subplot(2, 1, 2)
+plt.plot(stats['train_acc_history'], label='train')
+plt.plot(stats['val_acc_history'], label='val')
+plt.title('Classification accuracy history')
+plt.xlabel('Epoch')
+plt.ylabel('Classification accuracy')
+plt.tight_layout()
+plt.legend()
+plt.show()
+"""
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 # visualize the weights of the best network
