@@ -47,6 +47,8 @@ class TwoLayerNet(object):
         self.params['W2'] = std * np.random.randn(hidden_size, output_size)
         self.params['b2'] = np.zeros(output_size)
 
+        self.num_classes = output_size
+
     def loss(self, X, y=None, reg=0.0):
         """
         Compute the loss and gradients for a two layer fully connected neural
@@ -124,21 +126,42 @@ class TwoLayerNet(object):
         # grads['W1'] should store the gradient on W1, and be a matrix of same size #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+		
+		# '''
+        # Delta = np.zeros(a3.shape)
+        # Delta[range(N), y] = 1.0
+        #
+        # dJ_dW1 = np.dot(W2, np.dot( (a3 - Delta).T , a1 ) ).T / N + 2.0 * reg * W1
+        #
+        # dJ_dW2 = np.dot( (a3 - Delta).T , a2 ).T / N + 2.0 * reg * W2
+        #
+        # dJ_b1 =  np.sum(np.dot(W2 , (a3 - Delta).T), axis=1) / N
+        # dJ_b2 =  np.sum((a3 - Delta).T, axis=1) / N
+        #
+        # grads['W1'] = dJ_dW1
+        # grads['W2'] =  dJ_dW2
+        # grads['b1'] =  dJ_b1
+        # grads['b2'] =  dJ_b2
+		# '''
+        delta = np.zeros((N, self.num_classes))
+        delta[np.arange(y.size), y] = 1         # to one-hot
 
-        Delta = np.zeros(a3.shape)
-        Delta[range(N), y] = 1.0
+        dZ3 = (a3 - delta)
+        dW2 = np.matmul(a2.T, dZ3) / N + 2 * reg * W2
+        db2 = np.sum(dZ3.T,axis=1) / N
 
-        dJ_dW1 = np.dot(W2, np.dot( (a3 - Delta).T , a1 ) ).T / N + 2.0 * reg * W1
+        dA2 = np.matmul(dZ3, W2.T)
 
-        dJ_dW2 = np.dot( (a3 - Delta).T , a2 ).T / N + 2.0 * reg * W2
 
-        dJ_b1 =  np.sum(np.dot(W2 , (a3 - Delta).T), axis=1) / N
-        dJ_b2 =  np.sum((a3 - Delta).T, axis=1) / N
+			
+        dZ2 = np.multiply(dA2, np.int64(z2 > 0))
+        dW1 = np.matmul(a1.T,dZ2) / N + 2 * reg * W1
+        db1 = np.sum(np.multiply(dA2, np.int64(z2 > 0)).T, axis=1) / N
 
-        grads['W1'] = dJ_dW1
-        grads['W2'] =  dJ_dW2
-        grads['b1'] =  dJ_b1
-        grads['b2'] =  dJ_b2
+        grads['W1'] = dW1
+        grads['b1'] = db1
+        grads['W2'] = dW2
+        grads['b2'] = db2
 
         pass
 
@@ -193,7 +216,6 @@ class TwoLayerNet(object):
             #shuffled_ind = np.random.shuffle(np.arange(num_train))
             indices = np.random.randint(0, num_train, size=batch_size)
             np.random.shuffle(indices)
-            # shuffled_ind  = np.random.randint(0, num_train, size=batch_size)
             X_batch = X[indices]
             y_batch = y[indices]
 

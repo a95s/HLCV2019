@@ -57,8 +57,9 @@ def init_toy_data():
     return X, y
 
 
-''' 
 #momo003
+'''
+
 net = init_toy_model()
 X, y = init_toy_data()
 
@@ -149,7 +150,8 @@ plt.xlabel('iteration')
 plt.ylabel('training loss')
 plt.title('Training Loss history')
 plt.show()
-# momo003
+
+# # momo003
 '''
 
 # # Load the data
@@ -159,6 +161,9 @@ plt.show()
 # Invoke the get_CIFAR10_data function to get our data.
 
 X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data()
+
+#momo003
+
 print('Train data shape: ', X_train.shape)
 print('Train labels shape: ', y_train.shape)
 print('Validation data shape: ', X_val.shape)
@@ -168,7 +173,7 @@ print('Test labels shape: ', y_test.shape)
 
 # Visualize some images to get a feel for the data
 
-#  momo003
+
 plt.imshow(visualize_grid(X_train[:100, :].reshape(100, 32,32, 3), padding=3).astype('uint8'))
 plt.gca().axis('off')
 plt.show()
@@ -186,9 +191,9 @@ num_classes = 10
 net = TwoLayerNet(input_size, hidden_size, num_classes)
 # Train the network
 stats = net.train(X_train, y_train, X_val, y_val,
-            num_iters=2500, batch_size=500,
+            num_iters=5000, batch_size=400,
             learning_rate=1e-3, learning_rate_decay=0.95,
-            reg=0.30, verbose=True)
+            reg=0.10, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val) == y_val).mean()
@@ -210,19 +215,20 @@ print('Validation accuracy: ', val_acc)
 
 # Plot the loss function and train / validation accuracies
 
-                                                  # momo003
+                                                  
 plt.subplot(2, 1, 1)
 plt.plot(stats['loss_history'])
 plt.title('Loss history')
 plt.xlabel('Iteration')
 plt.ylabel('Loss')
-print(stats['train_acc_history'],stats['val_acc_history'])     ### momo003
+print(stats['train_acc_history'],stats['val_acc_history'])     
 plt.subplot(2, 1, 2)
 plt.plot(stats['train_acc_history'], label='train')
 plt.plot(stats['val_acc_history'], label='val')
 plt.title('Classification accuracy history')
 plt.xlabel('Epoch')
 plt.ylabel('Classification accuracy')
+plt.tight_layout()
 plt.legend()
 plt.show()
 
@@ -230,6 +236,9 @@ plt.show()
 # Visualize the weights of the network
 
 show_net_weights(net)
+
+
+#momo003
 
 # # Tune your hyperparameters
 #
@@ -275,39 +284,35 @@ best_net = None # store the best model into this
 #################################################################################
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-
 # standardize data, PCA works beter
-sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
+# from sklearn.preprocessing import StandardScaler
+# sc = StandardScaler()
+# X_train = sc.fit_transform(X_train)
+# X_test = sc.transform(X_test)
 
 '''
-# Once Apply PCA to check the influence of each component for keeping some % of variance
+# Only for one time we apply PCA using all parameters to check
+# the influence of each component for keeping some % of variance
+from sklearn.decomposition import PCA
 pca = PCA()
 X_train = pca.fit_transform(X_train)
 X_test = pca.transform(X_test)
-
-print(pca.components_)
 # how much variance is caused by each principle component
 print("explained_variance =\n", pca.explained_variance_ratio_  )
-
-#Plotting the Cumulative Summation of the Explained Variance
-# to get how many components are needed for each value of cumulative variance
+# Plot the Cumulative Summation of the Explained Variance
+# to know how many components are needed for each value of cumulative variance
 plt.figure()
 plt.plot(np.cumsum(pca.explained_variance_ratio_))
 plt.xlabel('Number of Components')
 plt.ylabel('Variance (%)') #for each component
-plt.title('Pulsar Dataset Explained Variance')
+plt.title('')
 plt.show()
-'''
 
-# 250 components are giving more than 95 % of variance
-# we reduce the number of components (dimensions) to 250
-n_comp = 250
-pca = PCA(n_components=n_comp)
+# n_comp components are giving more than X % of variance
+# we reduce the number of components (dimensions) to n_comp
+from sklearn.decomposition import PCA
+n_comp = 500
+pca = PCA(n_components=n_comp) #, whiten=False, random_state=2019)
 X_train_pca = pca.fit_transform(X_train)
 X_test_pca = pca.fit_transform(X_test)
 X_val_pca = pca.fit_transform(X_val)
@@ -316,30 +321,50 @@ print('shape 1  ', X_train.shape)
 print('shape 2  ', X_train_pca.shape)
 
 # Now train using these reduced sets
-input_size  = n_comp       # 32 * 32 * 3   # = 3072
-hidden_size = 100
+input_size  =  n_comp       # 32 * 32 * 3   # = 3072
+hidden_size = 50
 num_classes = 10
 net = TwoLayerNet(input_size, hidden_size, num_classes)
 # Train the network
 stats = net.train(X_train_pca, y_train, X_val_pca, y_val,
-            num_iters=3000, batch_size=1000,
-            learning_rate=1e-3, learning_rate_decay=1.95,
-            reg=0.30, verbose=True)
+            num_iters=5000, batch_size=200,
+            learning_rate=1e-3, learning_rate_decay=0.95,
+            reg=0.10, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val_pca) == y_val).mean()
 print('Validation accuracy: ', val_acc)
 
+plt.subplot(2, 1, 1)
+plt.plot(stats['loss_history'])
+plt.title('Loss history')
+plt.xlabel('Iteration')
+plt.ylabel('Loss')
+print(stats['train_acc_history'],stats['val_acc_history'])     ### momo003
+plt.subplot(2, 1, 2)
+plt.plot(stats['train_acc_history'], label='train')
+plt.plot(stats['val_acc_history'], label='val')
+plt.title('Classification accuracy history')
+plt.xlabel('Epoch')
+plt.ylabel('Classification accuracy')
+plt.tight_layout()
+plt.legend()
+plt.show()
+'''
+
+best_net = net
 
 pass
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 # visualize the weights of the best network
-show_net_weights(best_net)
+#show_net_weights(best_net)
 
 # # Run on the test set
 # When you are done experimenting, you should evaluate your final trained
 # network on the test set; you should get above 48%.
+
+best_net = net
 
 test_acc = (best_net.predict(X_test) == y_test).mean()
 print('Test accuracy: ', test_acc)
