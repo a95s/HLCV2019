@@ -193,7 +193,7 @@ net = TwoLayerNet(input_size, hidden_size, num_classes)
 stats = net.train(X_train, y_train, X_val, y_val,
             num_iters=5000, batch_size=400,
             learning_rate=1e-3, learning_rate_decay=0.95,
-            reg=0.10, verbose=True)
+            reg=0.30, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val) == y_val).mean()
@@ -238,7 +238,7 @@ plt.show()
 show_net_weights(net)
 
 
-#momo003
+best_net = net
 
 # # Tune your hyperparameters
 #
@@ -269,7 +269,7 @@ show_net_weights(net)
 
 # **Explain your hyperparameter tuning process in the report.**
 
-best_net = None # store the best model into this
+# best_net = None # store the best model into this
 
 #################################################################################
 # TODO: Tune hyperparameters using the validation set. Store your best trained  #
@@ -284,15 +284,11 @@ best_net = None # store the best model into this
 #################################################################################
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-# standardize data, PCA works beter
-# from sklearn.preprocessing import StandardScaler
-# sc = StandardScaler()
-# X_train = sc.fit_transform(X_train)
-# X_test = sc.transform(X_test)
+# the data is already normalized, we do not need to do it for PCA
 
-'''
 # Only for one time we apply PCA using all parameters to check
 # the influence of each component for keeping some % of variance
+'''
 from sklearn.decomposition import PCA
 pca = PCA()
 X_train = pca.fit_transform(X_train)
@@ -307,11 +303,12 @@ plt.xlabel('Number of Components')
 plt.ylabel('Variance (%)') #for each component
 plt.title('')
 plt.show()
+'''
 
 # n_comp components are giving more than X % of variance
 # we reduce the number of components (dimensions) to n_comp
 from sklearn.decomposition import PCA
-n_comp = 500
+n_comp = 250
 pca = PCA(n_components=n_comp) #, whiten=False, random_state=2019)
 X_train_pca = pca.fit_transform(X_train)
 X_test_pca = pca.fit_transform(X_test)
@@ -327,9 +324,9 @@ num_classes = 10
 net = TwoLayerNet(input_size, hidden_size, num_classes)
 # Train the network
 stats = net.train(X_train_pca, y_train, X_val_pca, y_val,
-            num_iters=5000, batch_size=200,
-            learning_rate=1e-3, learning_rate_decay=0.95,
-            reg=0.10, verbose=True)
+            num_iters=1000, batch_size=200,
+            learning_rate=1e-4, learning_rate_decay=0.95,
+            reg=0.25, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val_pca) == y_val).mean()
@@ -340,7 +337,7 @@ plt.plot(stats['loss_history'])
 plt.title('Loss history')
 plt.xlabel('Iteration')
 plt.ylabel('Loss')
-print(stats['train_acc_history'],stats['val_acc_history'])     ### momo003
+print(stats['train_acc_history'],stats['val_acc_history'])
 plt.subplot(2, 1, 2)
 plt.plot(stats['train_acc_history'], label='train')
 plt.plot(stats['val_acc_history'], label='val')
@@ -350,9 +347,7 @@ plt.ylabel('Classification accuracy')
 plt.tight_layout()
 plt.legend()
 plt.show()
-'''
 
-best_net = net
 
 pass
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -364,7 +359,7 @@ pass
 # When you are done experimenting, you should evaluate your final trained
 # network on the test set; you should get above 48%.
 
-best_net = net
+# best_net = net
 
 test_acc = (best_net.predict(X_test) == y_test).mean()
 print('Test accuracy: ', test_acc)
