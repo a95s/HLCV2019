@@ -134,7 +134,7 @@ class ConvNet(nn.Module):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         for i in range(0,15):
             x = self.layers[i](x)
-            print(x.size())
+        #    print(x.size())
         
         #flattening
         n_features = np.prod(x.size()[1:])
@@ -142,7 +142,7 @@ class ConvNet(nn.Module):
         
         for i in range(15, 18):
             x = self.layers[i](x)
-            print(x.size())
+        #    print(x.size())
         out = x
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return out
@@ -190,7 +190,7 @@ model = ConvNet(input_size, hidden_size, num_classes, norm_layer=norm_layer).to(
 
 model.apply(weights_init)
 # Print the model
-#print(model)
+print(model)
 # Print model size
 #======================================================================================
 # Q1.b: Implementing the function to count the number of trainable parameters in the model
