@@ -58,7 +58,7 @@ test_transform = transforms.Compose([transforms.ToTensor(),
 cifar_dataset = torchvision.datasets.CIFAR10(root='datasets/',
                                            train=True,
                                            transform=norm_transform,
-                                           download=True)
+                                           download=False)
 
 test_dataset = torchvision.datasets.CIFAR10(root='datasets/',
                                           train=False,
@@ -108,23 +108,23 @@ class ConvNet(nn.Module):
             nn.Conv2d(3, hidden_layers[0], 3, stride=1, padding=1),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
-            nn.Conv2d(3, hidden_layers[1], 3, stride=1, padding=1),
+            nn.Conv2d(hidden_layers[0], hidden_layers[1], 3, stride=1, padding=1),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
-            nn.Conv2d(3, hidden_layers[2], 3, stride=1, padding=1),
+            nn.Conv2d(hidden_layers[1], hidden_layers[2], 3, stride=1, padding=1),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
-            nn.Conv2d(3, hidden_layers[3], 3, stride=1, padding=1),
+            nn.Conv2d(hidden_layers[2], hidden_layers[3], 3, stride=1, padding=1),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
-            nn.Conv2d(3, hidden_layers[4], 3, stride=1, padding=1),
+            nn.Conv2d(hidden_layers[3], hidden_layers[4], 3, stride=1, padding=1),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Linear(hidden_layers[4], hidden_layers[5]),
             nn.ReLU(),
             nn.Linear(hidden_layers[5], num_classes)
         ]
-
+        self.layers = nn.Sequential(*layers)
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     def forward(self, x):
@@ -134,11 +134,15 @@ class ConvNet(nn.Module):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         for i in range(0,15):
             x = self.layers[i](x)
-
-        x = x.view(-1)
+            print(x.size())
+        
+        #flattening
+        n_features = np.prod(x.size()[1:])
+        x = x.view(-1, n_features)
         
         for i in range(15, 18):
             x = self.layers[i](x)
+            print(x.size())
         out = x
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return out
@@ -172,8 +176,7 @@ def VisualizeFilter(model):
     # You can use matlplotlib.imshow to visualize an image in python                #
     #################################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-    print('WIP')
-    return 0
+    pass
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 #======================================================================================
@@ -187,7 +190,7 @@ model = ConvNet(input_size, hidden_size, num_classes, norm_layer=norm_layer).to(
 
 model.apply(weights_init)
 # Print the model
-print(model)
+#print(model)
 # Print model size
 #======================================================================================
 # Q1.b: Implementing the function to count the number of trainable parameters in the model
