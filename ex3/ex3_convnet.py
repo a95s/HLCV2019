@@ -34,7 +34,7 @@ learning_rate_decay = 0.95
 reg=0.001
 num_training= 49000
 num_validation =1000
-norm_layer = False
+norm_layer = None
 print(hidden_size)
 
 
@@ -106,23 +106,23 @@ class ConvNet(nn.Module):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         layers = [
             nn.Conv2d(3, hidden_layers[0], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[0]),
+            nn.BatchNorm2d(hidden_layers[0], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Conv2d(hidden_layers[0], hidden_layers[1], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[1]),
+            nn.BatchNorm2d(hidden_layers[1], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Conv2d(hidden_layers[1], hidden_layers[2], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[2]),
+            nn.BatchNorm2d(hidden_layers[2], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Conv2d(hidden_layers[2], hidden_layers[3], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[3]),
+            nn.BatchNorm2d(hidden_layers[3], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Conv2d(hidden_layers[3], hidden_layers[4], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[4]),
+            nn.BatchNorm2d(hidden_layers[4], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Linear(hidden_layers[4],hidden_layers[5]),
