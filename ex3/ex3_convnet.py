@@ -176,7 +176,17 @@ def VisualizeFilter(model):
     # You can use matlplotlib.imshow to visualize an image in python                #
     #################################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-    pass
+    fig=plt.figure(figsize=(3, 3))
+    columns = 16
+    rows = 8
+    theData = model.layers[0].weight.data
+    for i in range(1, columns*rows +1):
+        maxVal = torch.max(theData[i-1])
+        minVal = torch.min(theData[i-1])
+        img = (theData[i-1] - minVal)/ (maxVal - minVal)
+        fig.add_subplot(rows, columns, i).axis('off')
+        plt.imshow(img)
+    plt.show()
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 #======================================================================================
@@ -207,6 +217,22 @@ VisualizeFilter(model)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=reg)
 
+#temp
+lr = learning_rate
+total_step = len(train_loader)
+for i, (images, labels) in enumerate(train_loader):
+    if i == 0:
+        images = images.to(device)
+        labels = labels.to(device)
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+VisualizeFilter(model)
+torch.save(model.state_dict(), 'model.ckpt')
+#/temp
+"""
 # Train the model
 lr = learning_rate
 total_step = len(train_loader)
@@ -225,7 +251,6 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
         if (i+1) % 100 == 0:
             print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                    .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
@@ -287,5 +312,5 @@ with torch.no_grad():
 VisualizeFilter(model)
 # Save the model checkpoint
 torch.save(model.state_dict(), 'model.ckpt')
-
+"""
 
