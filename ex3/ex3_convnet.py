@@ -6,6 +6,9 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
+import copy
+
+
 def weights_init(m):
     if type(m) == nn.Linear:
         m.weight.data.normal_(0.0, 1e-3)
@@ -14,6 +17,7 @@ def weights_init(m):
 def update_lr(optimizer, lr):
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
+
 
 #--------------------------------
 # Device configuration
@@ -26,8 +30,9 @@ print('Using device: %s'%device)
 #--------------------------------
 input_size = 3
 num_classes = 10
-hidden_size = [128, 512, 512, 512, 512, 512]
-num_epochs = 2
+hidden_size =   [32,  64,  64,  64,  64,  64]
+# hidden_size = [128, 512, 512, 512, 512, 512]
+num_epochs = 20
 batch_size = 200
 learning_rate = 2e-3
 learning_rate_decay = 0.95
@@ -35,8 +40,10 @@ reg=0.001
 num_training= 49000
 num_validation =1000
 norm_layer = None
-print(hidden_size)
 
+#print(hidden_size)
+
+model_dir = 'model_dir'
 
 #-------------------------------------------------
 # Load the CIFAR-10 dataset
@@ -106,23 +113,23 @@ class ConvNet(nn.Module):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         layers = [
             nn.Conv2d(3, hidden_layers[0], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[0], momentum=norm_layer),
+            # nn.BatchNorm2d(hidden_layers[0], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Conv2d(hidden_layers[0], hidden_layers[1], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[1], momentum=norm_layer),
+            # nn.BatchNorm2d(hidden_layers[1], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Conv2d(hidden_layers[1], hidden_layers[2], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[2], momentum=norm_layer),
+            # nn.BatchNorm2d(hidden_layers[2], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Conv2d(hidden_layers[2], hidden_layers[3], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[3], momentum=norm_layer),
+            # nn.BatchNorm2d(hidden_layers[3], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Conv2d(hidden_layers[3], hidden_layers[4], 3, stride=1, padding=1),
-            nn.BatchNorm2d(hidden_layers[4], momentum=norm_layer),
+            # nn.BatchNorm2d(hidden_layers[4], momentum=norm_layer),
             nn.MaxPool2d(2, 2, 0),
             nn.ReLU(),
             nn.Linear(hidden_layers[4],hidden_layers[5]),
@@ -185,8 +192,8 @@ def VisualizeFilter(model):
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     fig=plt.figure(figsize=(3, 3))
-    columns = 16
-    rows    = 8
+    columns = 8  # 16
+    rows    = 4  # 8
     theData = model.layers[0].weight.data
     for i in range(1, columns * rows + 1):
         maxVal = torch.max(theData[i - 1])
@@ -226,6 +233,8 @@ VisualizeFilter(model)
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=reg)
+
+best_acc = 0.
 
 # Train the model
 lr = learning_rate
@@ -273,6 +282,11 @@ for epoch in range(num_epochs):
         best_model = None
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
+        acc =  100 * correct / total
+        if acc >= best_acc:
+            best_acc = acc
+            best_model_wts = copy.deepcopy(model.state_dict())
+
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     model.train()
@@ -285,6 +299,9 @@ model.eval()
 # best model so far and perform testing with this model.                        #
 #################################################################################
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
+# load best model weights
+model.load_state_dict(best_model_wts)
 
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 with torch.no_grad():
