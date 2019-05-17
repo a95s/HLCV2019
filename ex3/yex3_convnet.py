@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 import numpy as np
@@ -33,7 +34,7 @@ num_classes = 10
 #hidden_size =   [32,  64,  64,  64,  64,  64]
 hidden_size = [128, 512, 512, 512, 512, 512]
 num_epochs = 20
-batch_size = 200
+batch_size = 2
 learning_rate = 2e-3
 learning_rate_decay = 0.95
 reg=0.001
@@ -53,9 +54,32 @@ model_dir = 'model_dir'
 # hyper-parameters and put them in the data_aug_transforms variable             #
 #################################################################################
 data_aug_transforms = []
+
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
+transform = transforms.Compose(
+    [transforms.ToTensor(),
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                        download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=4,
+                                          shuffle=True)
+
+testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+                                       download=True, transform=transform)
+
+testloader = torch.utils.data.DataLoader(testset, batch_size=4,
+                                         shuffle=False)
+
+valset = torch.utils.data.Subset(trainset, list(range(48000, 48999)))
+
+valloader = torch.utils.data.DataLoader(dataset=valset,
+                                        batch_size=4,
+                                        shuffle=False)
+
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+"""
 norm_transform = transforms.Compose(data_aug_transforms+[transforms.ToTensor(),
                                      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
                                      ])
@@ -71,18 +95,21 @@ test_dataset = torchvision.datasets.CIFAR10(root='datasets/',
                                           train=False,
                                           transform=test_transform
                                           )
+"""
 #-------------------------------------------------
 # Prepare the training and validation splits
 #-------------------------------------------------
 mask = list(range(num_training))
-train_dataset = torch.utils.data.Subset(cifar_dataset, mask)
+#train_dataset = torch.utils.data.Subset(cifar_dataset, mask)
+#train_dataset = torch.utils.data.Subset(trainset, mask)
 mask = list(range(num_training, num_training + num_validation))
-val_dataset = torch.utils.data.Subset(cifar_dataset, mask)
+#val_dataset = torch.utils.data.Subset(cifar_dataset, mask)
+#val_dataset = torch.utils.data.Subset(testset, mask)
 
 #-------------------------------------------------
 # Data loader
 #-------------------------------------------------
-train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
+"""train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            batch_size=batch_size,
                                            shuffle=True)
 
@@ -90,10 +117,11 @@ val_loader = torch.utils.data.DataLoader(dataset=val_dataset,
                                            batch_size=batch_size,
                                            shuffle=False)
 
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+#test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+test_loader = torch.utils.data.DataLoader(dataset=val_dataset,
                                           batch_size=batch_size,
                                           shuffle=False)
-
+"""
 
 #-------------------------------------------------
 # Convolutional neural network (Q1.a and Q2.a)
@@ -118,90 +146,47 @@ class ConvNet(nn.Module):
         # MaxPool2d(kernel_size, stride=None, padding=0, dilation=1, return_indices=False, ceil_mode=False)
 
         # Linear(in_features, out_features, bias=True)
-        KERNEL_SIZE = 3
+        kernel_size = 3
 
-        layers = [
-            # 32x32x3
-            nn.Conv2d(input_size, hidden_layers[0], KERNEL_SIZE, stride=1, padding=1),
-            # x128
-            # nn.BatchNorm2d(hidden_layers[0], momentum=norm_layer),
-            nn.MaxPool2d(2, 2, 0),
-            nn.ReLU(),
-            nn.Conv2d(hidden_layers[0], hidden_layers[1], KERNEL_SIZE, stride=1, padding=1),
-            # nn.BatchNorm2d(hidden_layers[1], momentum=norm_layer),
-            nn.MaxPool2d(2, 2, 0),
-            nn.ReLU(),
-            nn.Conv2d(hidden_layers[1], hidden_layers[2], KERNEL_SIZE, stride=1, padding=1),
-            # nn.BatchNorm2d(hidden_layers[2], momentum=norm_layer),
-            nn.MaxPool2d(2, 2, 0),
-            nn.ReLU(),
-            nn.Conv2d(hidden_layers[2], hidden_layers[3], KERNEL_SIZE, stride=1, padding=1),
-            # nn.BatchNorm2d(hidden_layers[3], momentum=norm_layer),
-            nn.MaxPool2d(2, 2, 0),
-            nn.ReLU(),
-            nn.Conv2d(hidden_layers[3], hidden_layers[4], KERNEL_SIZE, stride=1, padding=1),
-            # nn.BatchNorm2d(hidden_layers[4], momentum=norm_layer),
-            nn.MaxPool2d(2, 2, 0),
-            nn.ReLU(),
-            nn.Linear(hidden_layers[4],hidden_layers[5]),
-            nn.ReLU(),
-            nn.Linear(hidden_layers[5], num_classes)
-        ]
+        self.conv1 = nn.Conv2d(input_size, hidden_layers[0], kernel_size, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(hidden_layers[0], hidden_layers[1], kernel_size, stride=1, padding=1)
+        self.conv3 = nn.Conv2d(hidden_layers[1], hidden_layers[2], kernel_size, stride=1, padding=1)
+        self.conv4 = nn.Conv2d(hidden_layers[2], hidden_layers[3], kernel_size, stride=1, padding=1)
+        self.conv5 = nn.Conv2d(hidden_layers[3], hidden_layers[4], kernel_size, stride=1, padding=1)
 
-        """
-        layers = [
-            # 32x32x3
-            nn.Conv2d(3, hidden_layers[0], 3, stride=1, padding=1),
-            # nn.BatchNorm2d(hidden_layers[0], momentum=norm_layer),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2, 0),
-            nn.Conv2d(hidden_layers[0], hidden_layers[1], 3, stride=1, padding=1),
-            # nn.BatchNorm2d(hidden_layers[1], momentum=norm_layer),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2, 0),
-            nn.Conv2d(hidden_layers[1], hidden_layers[2], 3, stride=1, padding=1),
-            # nn.BatchNorm2d(hidden_layers[2], momentum=norm_layer),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2, 0),
-            nn.Conv2d(hidden_layers[2], hidden_layers[3], 3, stride=1, padding=1),
-            # nn.BatchNorm2d(hidden_layers[3], momentum=norm_layer),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2, 0),
-            nn.Conv2d(hidden_layers[3], hidden_layers[4], 3, stride=1, padding=1),
-            # nn.BatchNorm2d(hidden_layers[4], momentum=norm_layer),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2, 0),
-            nn.Linear(hidden_layers[4],hidden_layers[5]),
-            nn.ReLU(),
-            nn.Linear(hidden_layers[5], num_classes)
-        ]"""
+        self.fc1 = nn.Linear(hidden_layers[4],hidden_layers[5])
+        self.fc2 = nn.Linear(hidden_layers[5], num_classes)
 
 
-        self.layers = nn.Sequential(*layers)
-        print('Layers len',len(layers))
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
+    def num_flat_features(self, x):
+        size = x.size()[1:]  # all dimensions except the batch dimension
+        num_features = 1
+        for s in size:
+            num_features *= s
+        return num_features
 
     def forward(self, x):
         #################################################################################
         # TODO: Implement the forward pass computations                                 #
         #################################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        for i in range(0, len(self.layers)-3):
-            x = self.layers[i](x)
 
-        # flatten
-        n_features = np.prod(x.size()[1:])
-        print("flat features: " + str(n_features))
-        print("x.size(): " + str(x.size()))
-        x = x.view(-1, n_features)
+        # Max pooling over a (2, 2) window
+        x = F.max_pool2d(F.relu(self.conv1(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv2(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv3(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv4(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv5(x)), 2)
 
-        for i in range(len(self.layers)-3, len(self.layers)):
-            x = self.layers[i](x)
-
-        out = x
+        x = x.view(-1, self.num_flat_features(x))
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        return out
+        #return out
 
 
 #-------------------------------------------------
@@ -265,7 +250,7 @@ def VisualizeFilter(model):
 model = ConvNet(input_size, hidden_size, num_classes, norm_layer=norm_layer).to(device)
 # Q2.a - Initialize the model with correct batch norm layer
 
-model.apply(weights_init)
+#model.apply(weights_init)
 # Print the model
 print(model)
 # Print model size
@@ -277,52 +262,84 @@ PrintModelSize(model)
 # Q1.a: Implementing the function to visualize the filters in the first conv layers.
 # Visualize the filters before training
 #======================================================================================
-VisualizeFilter(model)
+#VisualizeFilter(model)
 
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=reg)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+#optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=reg)
 
 best_acc = 0.
 
 # Train the model
 lr = learning_rate
-total_step = len(train_loader)
-for epoch in range(num_epochs):
-    for i, (images, labels) in enumerate(train_loader):
+#total_step = len(train_loader)
+#for epoch in range(num_epochs):
+for epoch in range(2):
+    running_loss = 0.0
+    #for i, (images, labels) in enumerate(train_loader):
+    for i, data in enumerate(trainloader,0):
         # Move tensors to the configured device
+        images, labels = data
         images = images.to(device)
         labels = labels.to(device)
 
         # Forward pass
+        #print(images.size())
+        optimizer.zero_grad()
+        #model.zero_grad()
         outputs = model(images)
-
+        # print("-------")
+        # print(outputs)
+        # print("-------")
+        # print("-------")
+        # print(images)
+        # print("-------")
+        # print("-------")
+        # print(labels)
+        # print("-------")
+        # print(outputs.size())
         loss = criterion(outputs, labels)
 
         # Backward and optimize
-        optimizer.zero_grad()
+
         loss.backward()
         optimizer.step()
+        #if i == 100: exit(0)
+        #if (i+1) % 2000 == 1999:
+        #    print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
+        #          .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
 
-        if (i+1) % 100 == 0:
-            print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
-                   .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
+        running_loss += loss.item()
+        if i % 2000 == 1999:  # print every 2000 mini-batches
+            print('[%d, %5d] loss: %.3f' %
+                  (epoch + 1, i + 1, running_loss / 2000))
+            running_loss = 0.0
 
     # Code to update the lr
     lr *= learning_rate_decay
     update_lr(optimizer, lr)
+
     model.eval()
     with torch.no_grad():
         correct = 0
         total = 0
-        for images, labels in val_loader:
+        for images, labels in valloader:
             images = images.to(device)
             labels = labels.to(device)
+
+            # print("-------")
+            # print(images)
+            # print("-------")
+            # print("-------")
+            # print(labels)
+            # print("-------")
+            # exit(0)
             outputs = model(images)
-            print(outputs)
+            #print(outputs)
             _, predicted = torch.max(outputs.data, 1)
-            print(predicted)
+            #print(predicted)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
@@ -343,6 +360,8 @@ for epoch in range(num_epochs):
 
     model.train()
 
+print("Finished Training")
+
 # Test the model
 # In test phase, we don't need to compute gradients (for memory efficiency)
 model.eval()
@@ -353,13 +372,14 @@ model.eval()
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 # load best model weights
-model.load_state_dict(best_model_wts)
+#model.load_state_dict(best_model_wts)
 
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 with torch.no_grad():
     correct = 0
     total = 0
-    for images, labels in test_loader:
+    #for images, labels in test_loader:
+    for images, labels in testloader:
         images = images.to(device)
         labels = labels.to(device)
         outputs = model(images)
