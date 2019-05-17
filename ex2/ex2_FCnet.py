@@ -27,7 +27,7 @@ def show_net_weights(net):
 
 #-------------------------- * End of helper functions *--------------------------------
 
-"""
+
 #======================================================================================
 # Q1: Implementing forward pass and the loss functions
 #======================================================================================
@@ -150,8 +150,6 @@ plt.xlabel('iteration')
 plt.ylabel('training loss')
 plt.title('Training Loss history')
 plt.show()
-exit(0)
-"""
 
 # # Load the data
 # Now that you have implemented a two-layer network that passes
@@ -281,7 +279,7 @@ best_net = net # store the best model into this
 
 
 """
-# PCA 
+# PCA
 
 # n_comp components are giving more than X % of variance
 # we reduce the number of components (dimensions) to n_comp

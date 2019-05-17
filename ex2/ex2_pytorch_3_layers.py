@@ -24,7 +24,7 @@ print('Using device: %s'%device)
 # Hyper-parameters
 #--------------------------------
 input_size = 32 * 32 * 3
-hidden_size = [50]
+hidden_size = [50,50,50]
 num_classes = 10
 num_epochs = 10
 batch_size = 200
@@ -111,7 +111,11 @@ class MultiLayerPerceptron(nn.Module):
         layers = [
             nn.Linear(input_size, hidden_layers[0]),
             nn.ReLU(),
-            nn.Linear(hidden_layers[0], num_classes)
+            nn.Linear(hidden_layers[0], hidden_layers[1]),
+            nn.ReLU(),
+            nn.Linear(hidden_layers[1], hidden_layers[2]),
+            nn.ReLU(),
+            nn.Linear(hidden_layers[2], num_classes)
         ]
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         self.layers = nn.Sequential(*layers)
@@ -129,6 +133,10 @@ class MultiLayerPerceptron(nn.Module):
         x = self.layers[0](x)
         x = self.layers[1](x)
         x = self.layers[2](x)
+        x = self.layers[3](x)
+        x = self.layers[4](x)
+        x = self.layers[5](x)
+        x = self.layers[6](x)
         out = x
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return out
