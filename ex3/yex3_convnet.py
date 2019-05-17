@@ -34,7 +34,7 @@ num_classes = 10
 #hidden_size =   [32,  64,  64,  64,  64,  64]
 hidden_size = [128, 512, 512, 512, 512, 512]
 num_epochs = 20
-batch_size = 2
+batch_size = 4
 learning_rate = 2e-3
 learning_rate_decay = 0.95
 reg=0.001
@@ -56,7 +56,7 @@ model_dir = 'model_dir'
 data_aug_transforms = []
 
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+"""
 transform = transforms.Compose(
     [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -77,9 +77,9 @@ valset = torch.utils.data.Subset(trainset, list(range(48000, 48999)))
 valloader = torch.utils.data.DataLoader(dataset=valset,
                                         batch_size=4,
                                         shuffle=False)
-
-# *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 """
+# *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
 norm_transform = transforms.Compose(data_aug_transforms+[transforms.ToTensor(),
                                      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
                                      ])
@@ -95,21 +95,21 @@ test_dataset = torchvision.datasets.CIFAR10(root='datasets/',
                                           train=False,
                                           transform=test_transform
                                           )
-"""
+
 #-------------------------------------------------
 # Prepare the training and validation splits
 #-------------------------------------------------
 mask = list(range(num_training))
-#train_dataset = torch.utils.data.Subset(cifar_dataset, mask)
+train_dataset = torch.utils.data.Subset(cifar_dataset, mask)
 #train_dataset = torch.utils.data.Subset(trainset, mask)
 mask = list(range(num_training, num_training + num_validation))
-#val_dataset = torch.utils.data.Subset(cifar_dataset, mask)
+val_dataset = torch.utils.data.Subset(cifar_dataset, mask)
 #val_dataset = torch.utils.data.Subset(testset, mask)
 
 #-------------------------------------------------
 # Data loader
 #-------------------------------------------------
-"""train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            batch_size=batch_size,
                                            shuffle=True)
 
@@ -121,7 +121,7 @@ val_loader = torch.utils.data.DataLoader(dataset=val_dataset,
 test_loader = torch.utils.data.DataLoader(dataset=val_dataset,
                                           batch_size=batch_size,
                                           shuffle=False)
-"""
+
 
 #-------------------------------------------------
 # Convolutional neural network (Q1.a and Q2.a)
@@ -278,8 +278,8 @@ lr = learning_rate
 #for epoch in range(num_epochs):
 for epoch in range(2):
     running_loss = 0.0
-    #for i, (images, labels) in enumerate(train_loader):
-    for i, data in enumerate(trainloader,0):
+    for i, data in enumerate(train_loader,0):
+    #for i, data in enumerate(trainloader,0):
         # Move tensors to the configured device
         images, labels = data
         images = images.to(device)
@@ -325,7 +325,8 @@ for epoch in range(2):
     with torch.no_grad():
         correct = 0
         total = 0
-        for images, labels in valloader:
+        for images, labels in val_loader:
+        #for images, labels in valloader:
             images = images.to(device)
             labels = labels.to(device)
 
@@ -378,8 +379,8 @@ model.eval()
 with torch.no_grad():
     correct = 0
     total = 0
-    #for images, labels in test_loader:
-    for images, labels in testloader:
+    for images, labels in test_loader:
+    #for images, labels in testloader:
         images = images.to(device)
         labels = labels.to(device)
         outputs = model(images)
