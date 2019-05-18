@@ -41,7 +41,6 @@ def show_net_weights(net):
 # Create a small net and some toy data to check your implementations.
 # Note that we set the random seed for repeatable experiments.
 
-
 input_size = 4
 hidden_size = 10
 num_classes = 3
@@ -55,9 +54,7 @@ def init_toy_data():
     np.random.seed(1)
     X = 10 * np.random.randn(num_inputs, input_size)
     y = np.array([0, 1, 2, 2, 1])
-
     return X, y
-
 
 net = init_toy_model()
 X, y = init_toy_data()
@@ -157,8 +154,10 @@ plt.show()
 # CIFAR-10 data so we can use it to train a classifier on a real dataset.
 # Invoke the get_CIFAR10_data function to get our data.
 
+
 #X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data(num_training=46000, num_validation=2000, num_test=2000)
 X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data()
+
 print('Train data shape: ', X_train.shape)
 print('Train labels shape: ', y_train.shape)
 print('Validation data shape: ', X_val.shape)
@@ -167,9 +166,9 @@ print('Test data shape: ', X_test.shape)
 print('Test labels shape: ', y_test.shape)
 
 # Visualize some images to get a feel for the data
-#plt.imshow(visualize_grid(X_train[:100, :].reshape(100, 32,32, 3), padding=3).astype('uint8'))
-#plt.gca().axis('off')
-#plt.show()
+plt.imshow(visualize_grid(X_train[:100, :].reshape(100, 32,32, 3), padding=3).astype('uint8'))
+plt.gca().axis('off')
+plt.show()
 
 # # Train a network
 # To train our network we will use SGD. In addition, we will
@@ -227,7 +226,8 @@ plt.show()
 # Visualize the weights of the network
 
 show_net_weights(net)
-#exit(0)
+
+
 # # Tune your hyperparameters
 #
 # **What's wrong?**. Looking at the visualizations above, we see that the loss
@@ -283,6 +283,10 @@ best_net = net # store the best model into this
 
 # n_comp components are giving more than X % of variance
 # we reduce the number of components (dimensions) to n_comp
+# the data is already normalized, we do not need to do it for PCA
+
+# Only for one time we apply PCA using all parameters to check
+# the influence of each component for keeping some % of variance
 
 from sklearn.decomposition import PCA
 n_comp = 250
@@ -330,9 +334,16 @@ plt.show()
 # visualize the weights of the best network
 show_net_weights(best_net)
 
+# *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
+# visualize the weights of the best network
+#show_net_weights(best_net)
+
+
 # # Run on the test set
 # When you are done experimenting, you should evaluate your final trained
 # network on the test set; you should get above 48%.
+
 
 test_acc = (best_net.predict(X_test) == y_test).mean()
 print('Test accuracy: ', test_acc)

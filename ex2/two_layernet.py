@@ -25,7 +25,9 @@ class TwoLayerNet(object):
     The outputs of the second fully-connected layer are the scores for each class.
     """
 
+
     def __init__(self, input_size, hidden_size, output_size, std=1e-4, use_dropout=False, keep_prob=0.0):
+
         """
         Initialize the model. Weights are initialized to small random values and
         biases are initialized to zero. Weights and biases are stored in the
@@ -87,6 +89,7 @@ class TwoLayerNet(object):
         # of shape (N, C).                                                          #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
         # print("params. shapes")
         # print("fwd pass")
         # print("X ", X.shape)
@@ -115,6 +118,7 @@ class TwoLayerNet(object):
         #print(a3.shape)
         #print(a3)
         #print(y)
+
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # If the targets are not given then jump out, we're done
@@ -122,6 +126,7 @@ class TwoLayerNet(object):
             return scores
 
         # Compute the loss
+
         loss = 0.0
         #############################################################################
         # TODO: Finish the forward pass, and compute the loss. This should include  #
@@ -131,9 +136,11 @@ class TwoLayerNet(object):
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         # Implement the loss for softmax output layer
+
         #loss = ((np.sum(-np.log(a3)))  + reg*(np.linalg.norm(W1,2) + np.linalg.norm(W2,2)))
         #print(a3[range(N),y])
         loss = (-1.0*(np.sum(np.log(a3[range(N),y]))) / N) + reg*(np.sum(np.square(W1)) + np.sum(np.square(W2)))
+
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -145,6 +152,7 @@ class TwoLayerNet(object):
         # grads['W1'] should store the gradient on W1, and be a matrix of same size #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
         # delta matrix appears in formulas
         #print("calc. loss")
         # 3 classes: 0,1,2
@@ -171,10 +179,12 @@ class TwoLayerNet(object):
         #print("intermediate grad shapes")
         #print(dZ3.shape,dA2.shape,dZ2.shape,dW2.shape,db2.shape,dW1.shape,db1.shape)
 
+
         grads['W1'] = dW1
         grads['b1'] = db1
         grads['W2'] = dW2
         grads['b2'] = db2
+
 
         # grads['W1'] = np.matmul(W2, np.matmul((a3 - delta).T, a1)).T / N + 2 * reg * W1
         # grads['b1'] = np.sum(np.matmul(W2, (a3 - delta).T), axis=1) / N
@@ -187,6 +197,7 @@ class TwoLayerNet(object):
         # print("dW2 ", grads['W2'].shape)
         # print("db1 ", grads['b1'].shape)
         # print("db2 ", grads['b2'].shape)
+
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -214,7 +225,9 @@ class TwoLayerNet(object):
         - verbose: boolean; if true print progress during optimization.
         """
         num_train = X.shape[0]
+
         iterations_per_epoch = max(num_train // batch_size, 1)
+
 
         # Use SGD to optimize the parameters in self.model
         loss_history = []
@@ -222,21 +235,25 @@ class TwoLayerNet(object):
         val_acc_history = []
 
         for it in range(num_iters):
+
             #X_batch = X
             #y_batch = y
             X_batch = None
             y_batch = None
+
 
             #########################################################################
             # TODO: Create a random minibatch of training data and labels, storing  #
             # them in X_batch and y_batch respectively.                             #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
             # get batch_size random entries, so we can get a random batch from set
             random_indices = np.random.randint(0, num_train, size=batch_size)
             #print(random_indices)
             X_batch = X[random_indices]
             y_batch = y[random_indices]
+
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
             # Compute loss and gradients using the current minibatch
@@ -252,6 +269,7 @@ class TwoLayerNet(object):
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
             self.params['W1'] = self.params['W1'] - learning_rate * grads['W1']
+
             self.params['b1'] = self.params['b1'] - learning_rate * grads['b1']
             self.params['W2'] = self.params['W2'] - learning_rate * grads['W2']
             self.params['b2'] = self.params['b2'] - learning_rate * grads['b2']
@@ -261,6 +279,7 @@ class TwoLayerNet(object):
             # print("b1 ", self.params['b1'].shape)
             # print("b2 ", self.params['b2'].shape)
             #exit(0)
+
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
             if verbose and it % 100 == 0:
@@ -305,7 +324,6 @@ class TwoLayerNet(object):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         y_pred = np.argmax(self.loss(X), axis=1)
-
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return y_pred

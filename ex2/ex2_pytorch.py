@@ -106,6 +106,7 @@ class MultiLayerPerceptron(nn.Module):
         # hidden_layers[-1] --> num_classes                                             #
         # Make use of linear and relu layers from the torch.nn module                   #
         #################################################################################
+
         layers = []
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         layers = [
@@ -158,11 +159,13 @@ if train:
             # Use examples in https://pytorch.org/tutorials/beginner/pytorch_with_examples.html
             #################################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
             outputs = model(images)
             loss =  criterion(outputs, labels)
             model.zero_grad()
             loss.backward()
             optimizer.step()
+
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
             if (i+1) % 100 == 0:
@@ -215,6 +218,7 @@ else:
 
     best_model = None # torch.load()
     model.load_state_dict(best_model)
+
     # Test the model
     # In test phase, we don't need to compute gradients (for memory efficiency)
     with torch.no_grad():
@@ -231,6 +235,7 @@ else:
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
             outputs = model(images)
             _, predicted = torch.max(outputs.data, 1)
+
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
