@@ -42,8 +42,8 @@ input_size = 3
 num_classes = 10
 hidden_size =   [32,  64,  64,  64,  64,  64]
 #hidden_size = [128, 512, 512, 512, 512, 512]
-num_epochs = 50
-batch_size = 200
+num_epochs = 20
+batch_size = 4
 learning_rate = 2e-3
 learning_rate_decay = 0.95
 reg=0.001
@@ -78,7 +78,7 @@ test_transform = transforms.Compose([transforms.ToTensor(),
 cifar_dataset = torchvision.datasets.CIFAR10(root='datasets/',
                                            train=True,
                                            transform=norm_transform,
-                                           download=True)
+                                           download=False)
 
 test_dataset = torchvision.datasets.CIFAR10(root='datasets/',
                                           train=False,
@@ -135,11 +135,11 @@ class ConvNet(nn.Module):
         self.conv4 = nn.Conv2d(hidden_layers[2], hidden_layers[3], kernel_size, stride=1, padding=1)
         self.conv5 = nn.Conv2d(hidden_layers[3], hidden_layers[4], kernel_size, stride=1, padding=1)
         
-        self.bn1 = nn.BatchNorm2d(hidden_layers[0], momentum=norm_layer)
-        self.bn2 = nn.BatchNorm2d(hidden_layers[1], momentum=norm_layer)
-        self.bn3 = nn.BatchNorm2d(hidden_layers[2], momentum=norm_layer)
-        self.bn4 = nn.BatchNorm2d(hidden_layers[3], momentum=norm_layer)
-        self.bn5 = nn.BatchNorm2d(hidden_layers[4], momentum=norm_layer)
+        #self.bn1 = nn.BatchNorm2d(hidden_layers[0], momentum=norm_layer)
+        #self.bn2 = nn.BatchNorm2d(hidden_layers[1], momentum=norm_layer)
+        #self.bn3 = nn.BatchNorm2d(hidden_layers[2], momentum=norm_layer)
+        #self.bn4 = nn.BatchNorm2d(hidden_layers[3], momentum=norm_layer)
+        #self.bn5 = nn.BatchNorm2d(hidden_layers[4], momentum=norm_layer)
 
         self.fc1 = nn.Linear(hidden_layers[4],hidden_layers[5])
         self.fc2 = nn.Linear(hidden_layers[5], num_classes)
@@ -164,35 +164,19 @@ class ConvNet(nn.Module):
         
         # Without BatchNormal
         
-        # conv --> relu --> pool 
-        #x = F.max_pool2d(F.relu(self.conv1(x)), 2)
-        #x = F.max_pool2d(F.relu(self.conv2(x)), 2)
-        #x = F.max_pool2d(F.relu(self.conv3(x)), 2)
-        #x = F.max_pool2d(F.relu(self.conv4(x)), 2)
-        #x = F.max_pool2d(F.relu(self.conv5(x)), 2)
-        
-        # conv --> pool --> relu                          as in ex3 sheet
-        #x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        #x = F.relu(F.max_pool2d(self.conv2(x), 2))
-        #x = F.relu(F.max_pool2d(self.conv3(x), 2))
-        #x = F.relu(F.max_pool2d(self.conv4(x), 2))
-        #x = F.relu(F.max_pool2d(self.conv5(x), 2))
+        x = F.max_pool2d(F.relu(self.conv1(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv2(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv3(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv4(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv5(x)), 2)
         
         # With BatchNormal
         
-        # conv --> bn --> relu --> pool
         #x = F.max_pool2d(F.relu(self.bn1( self.conv1(x)) ), 2)
         #x = F.max_pool2d(F.relu(self.bn2( self.conv2(x)) ), 2)
         #x = F.max_pool2d(F.relu(self.bn3( self.conv3(x)) ), 2)
         #x = F.max_pool2d(F.relu(self.bn4( self.conv4(x)) ), 2)
         #x = F.max_pool2d(F.relu(self.bn5( self.conv5(x)) ), 2)
-        
-        # conv --> bn --> pool --> relu                    as in ex3 sheet
-        x = F.relu(F.max_pool2d(self.bn1( self.conv1(x)) , 2))
-        x = F.relu(F.max_pool2d(self.bn2( self.conv2(x)) , 2))
-        x = F.relu(F.max_pool2d(self.bn3( self.conv3(x)) , 2))
-        x = F.relu(F.max_pool2d(self.bn4( self.conv4(x)) , 2))
-        x = F.relu(F.max_pool2d(self.bn5( self.conv5(x)) , 2))
 
         x = x.view(-1, self.num_flat_features(x))
         x = F.relu(self.fc1(x))
@@ -232,13 +216,12 @@ def VisualizeFilter(model):
     # You can use matlplotlib.imshow to visualize an image in python                #
     #################################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-    
-    with plt.style.context(('dark_background')):
-      fig=plt.figure(figsize=(3, 3))
-      columns = 8  # 16
-      rows    = 4   # 8  
-      theData = model.conv1.weight.data
-      for i in range(1, columns * rows + 1):
+
+    fig=plt.figure(figsize=(3, 3))
+    columns = 8  # 16
+    rows    = 4  # 8
+    theData = model.conv1.weight.data
+    for i in range(1, columns * rows + 1):
         maxVal = torch.max(theData[i - 1])
         minVal = torch.min(theData[i - 1])
         img    = (theData[i -1] - minVal) / (maxVal - minVal)
@@ -250,10 +233,8 @@ def VisualizeFilter(model):
             plt.imshow(imgcpu)
         else:
             plt.imshow(img)
-            
+
     plt.show()
-    
-    
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -282,7 +263,7 @@ PrintModelSize(model)
 # Q1.a: Implementing the function to visualize the filters in the first conv layers.
 # Visualize the filters before training
 #======================================================================================
-VisualizeFilter(model)
+#VisualizeFilter(model)
 
 
 # Loss and optimizer
@@ -294,47 +275,38 @@ best_acc = 0.
 loss_store = []
 val_acc_store =[]
 
-counter = 0
-t_counter = 0
-
 # Train the model
 lr = learning_rate
 total_step = len(train_loader)
 for epoch in range(num_epochs):
-    running_loss = 0.0
-    val_loss = 0.0  # momo003 early
+#for epoch in range(2):
+    #running_loss = 0.0
     for i, (images, labels) in enumerate(train_loader):
         # Move tensors to the configured device
         images = images.to(device)
         labels = labels.to(device)
 
         # Forward pass
-        optimizer.zero_grad()        # extra 
+        optimizer.zero_grad()         # extra  in comparison to ex3 original
         outputs = model(images)
 
         loss = criterion(outputs, labels)
 
         # Backward and optimize
-        # optimizer.zero_grad()       # commented 
+        # optimizer.zero_grad()       # commented in comparison to ex3 original
         loss.backward()
         optimizer.step()
         
-        #if (i+1) % 2000 == 1999:
-        #    print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
-        #          .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
-        #    loss_store.append([(epoch+1)*(i+1), loss.item()])
-        
-        counter += 1
-        running_loss += loss.item()
-        
+        if (i+1) % 2000 == 1999:
+            print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
+                  .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
+            loss_store.append([(epoch+1)*(i+1), loss.item()])
+
+        #running_loss += loss.item()
         #if i % 2000 == 1999:  # print every 2000 mini-batches
-        if (i+1) % 100 == 0 and (i+1) > 100:  
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, i + 1, running_loss / 100))
-            
-            loss_store.append([counter, running_loss / 100])
-            # loss_store.append([(epoch+1)*(i+1), running_loss / 2000])
-            running_loss = 0.0
+        #    print('[%d, %5d] loss: %.3f' %
+        #          (epoch + 1, i + 1, running_loss / 2000))
+        #    running_loss = 0.0
 
     # Code to update the lr
     lr *= learning_rate_decay
@@ -350,10 +322,6 @@ for epoch in range(num_epochs):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
-            
-            # add momo003 early
-            loss = criterion(outputs, labels)
-            val_loss += loss
 
         print('Validataion accuracy is: {} %'.format(100 * correct / total))
         val_acc_store.append([epoch+1, (100 * correct / total)])
@@ -378,18 +346,16 @@ print("Finished Training")
 loss_store = np.array(loss_store)
 val_acc_store = np.array(val_acc_store)
 
-
-plt.plot(loss_store[:, 0], loss_store[:, 1], label='w BatchNorm, mom=%s' %(norm_layer))
-plt.xlabel('Iterations', fontsize=12)
-plt.ylabel('Loss %', fontsize=12)
-plt.legend(fontsize=12)
+plt.plot(loss_store[:, 0], loss_store[:, 1], label='with Batch Normalization')
+plt.xlabel('Iterations')
+plt.ylabel('Loss %')
+plt.legend()
 plt.show()
 
-
-plt.plot(val_acc_store[:, 0], val_acc_store[:, 1], label='w BatchNorm, mom=%s' %(norm_layer))
-plt.xlabel('Epoch', fontsize=12)
-plt.ylabel('Validation accuracy %', fontsize=12)
-plt.legend(fontsize=12)
+plt.plot(val_acc_store[:, 0], val_acc_store[:, 1], label='with Batch Normalization')
+plt.xlabel('Epoch')
+plt.ylabel('Validation accuracy %')
+plt.legend()
 plt.show()
 
 # Test the model
@@ -402,7 +368,7 @@ model.eval()
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 # load best model weights
-model.load_state_dict(best_model_wts)
+#model.load_state_dict(best_model_wts)
 
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 with torch.no_grad():
