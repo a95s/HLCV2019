@@ -49,7 +49,7 @@ learning_rate_decay = 0.95
 reg=0.001
 num_training= 49000
 num_validation =1000
-norm_layer = None
+norm_layer = 0.1
 
 print(hidden_size)
 
@@ -295,14 +295,15 @@ loss_store = []
 val_acc_store =[]
 
 counter = 0
-t_counter = 0
+
+max_epochs_stop = 5
+epochs_no_improve = 0
 
 # Train the model
 lr = learning_rate
 total_step = len(train_loader)
 for epoch in range(num_epochs):
     running_loss = 0.0
-    val_loss = 0.0  # momo003 early
     for i, (images, labels) in enumerate(train_loader):
         # Move tensors to the configured device
         images = images.to(device)
@@ -351,9 +352,7 @@ for epoch in range(num_epochs):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
             
-            # add momo003 early
-            loss = criterion(outputs, labels)
-            val_loss += loss
+           
 
         print('Validataion accuracy is: {} %'.format(100 * correct / total))
         val_acc_store.append([epoch+1, (100 * correct / total)])
@@ -368,6 +367,11 @@ for epoch in range(num_epochs):
         if acc >= best_acc:
             best_acc = acc
             best_model_wts = copy.deepcopy(model.state_dict())
+        else:
+            epochs_no_improve += 1
+            if epochs_no_improve >= max_epochs_stop:
+              print('Early Stopping Mechanism')
+              break
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
