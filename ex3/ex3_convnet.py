@@ -296,7 +296,7 @@ val_acc_store =[]
 
 counter = 0
 
-max_epochs_stop = 5
+max_epochs_stop = 3
 epochs_no_improve = 0
 
 # Train the model
@@ -367,6 +367,7 @@ for epoch in range(num_epochs):
         if acc >= best_acc:
             best_acc = acc
             best_model_wts = copy.deepcopy(model.state_dict())
+            epochs_no_improve = 0
         else:
             epochs_no_improve += 1
             if epochs_no_improve >= max_epochs_stop:
@@ -374,8 +375,9 @@ for epoch in range(num_epochs):
               break
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+    
     model.train()
+
 
 print("Finished Training")
 
